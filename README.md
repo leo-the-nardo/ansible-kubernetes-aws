@@ -1,5 +1,5 @@
 # Ansible Masterclass to cover RED HAT CERTIFIED SPECIALIST IN ANSIBLE AUTOMATION exam (EX407)
-A project to install a Kubernetes cluster using Ansible + AWS
+A project to setup a Kubernetes cluster using Ansible + AWS
 
 ## Steps
 - Provisioning => Create instances/vms to our cluster
