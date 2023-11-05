@@ -7,7 +7,7 @@
     name: "{{ sec_group_name }}"
     description: sg giropops
     profile: "{{ aws_profile }}"
-    region: "us-east-1"
+    region: "{{ region }}"
     rules:
       - proto: tcp
         from_port: 22
@@ -17,3 +17,14 @@
     rules_egress:
       - proto: all
         cidr_ip: 0.0.0.0/0
+- name: Creating ec2 instance
+  #https://docs.ansible.com/ansible/latest/collections/amazon/aws/ec2_instance_module.html
+  local_action:
+    module: amazon.aws.ec2_instance
+    security_group: "{{ sec_group_name }}"
+    instance_type: "{{ instance_type }}" #t2.micro
+    image: "{{ image }}" #ami-0d5eff06f840b45e9
+    profile: "{{ aws_profile }}"
+    wait: true
+    region: "{{ region }}"
+    key_name: "{{ key_name }}" #foo.pem
