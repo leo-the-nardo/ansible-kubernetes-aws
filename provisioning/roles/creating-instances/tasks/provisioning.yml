@@ -54,3 +54,11 @@
     regexp: {{ item.private_ip }}
     insertafter: "[kubernetes]"
     line: {{ item.private_ip }}
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/wait_for_module.html
+- name: Waiting for SSH to come up  # pause ansible pipeline until ssh is up
+  delegate_to: localhost
+  with_items: "{{ ec2.instances }}" 
+  ansible.builtin.wait_for:
+    host: "{{ item.public_ip }}"
+    port: 22
+    state: started
