@@ -1,0 +1,19 @@
+- name: Creating Security Group
+  #https://docs.ansible.com/ansible/latest/collections/amazon/aws/ec2_security_group_module.html
+  register: basic_firewall
+  # amazon.aws.ec2_security_group:
+  local_action:
+    module: amazon.aws.ec2_security_group
+    name: "{{ sec_group_name }}"
+    description: sg giropops
+    profile: "{{ aws_profile }}"
+    region: "us-east-1"
+    rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: 0.0.0.0/0
+        rule_desc: SSH
+    rules_egress:
+      - proto: all
+        cidr_ip: 0.0.0.0/0
