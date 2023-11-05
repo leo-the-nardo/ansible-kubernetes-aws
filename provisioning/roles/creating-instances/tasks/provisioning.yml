@@ -1,9 +1,8 @@
+# https://docs.ansible.com/ansible/latest/collections/amazon/aws/ec2_security_group_module.html
 - name: Creating Security Group
-  #https://docs.ansible.com/ansible/latest/collections/amazon/aws/ec2_security_group_module.html
+  delegate_to: localhost
   register: basic_firewall
-  # amazon.aws.ec2_security_group:
-  local_action:
-    module: amazon.aws.ec2_security_group
+  amazon.aws.ec2_security_group:
     name: "{{ sec_group_name }}"
     description: sg giropops
     profile: "{{ aws_profile }}"
@@ -17,14 +16,23 @@
     rules_egress:
       - proto: all
         cidr_ip: 0.0.0.0/0
+# https://docs.ansible.com/ansible/latest/collections/amazon/aws/ec2_instance_module.html
 - name: Creating ec2 instance
-  #https://docs.ansible.com/ansible/latest/collections/amazon/aws/ec2_instance_module.html
-  local_action:
-    module: amazon.aws.ec2_instance
-    security_group: "{{ sec_group_name }}"
-    instance_type: "{{ instance_type }}" #t2.micro
-    image: "{{ image }}" #ami-0d5eff06f840b45e9
+  delegate_to: localhost
+  register: ec2
+  amazon.aws.ec2_security_group:
+    security_group: "{{ sec_group_name }}" # sg-xpto
+    instance_type: "{{ instance_type }}"   # t2.micro
+    image: "{{ image }}"                   # ami-0d5eff06f840b45e9
     profile: "{{ aws_profile }}"
     wait: true
-    region: "{{ region }}"
-    key_name: "{{ key_name }}" #foo.pem
+    region: "{{ region }}"                 # us-east-1
+    key_name: "{{ key_name }}"             # foo.pem
+    count: {{ count }}
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/add_host_module.html
+- name: Adding instance to in-memory inventory host group
+  with-items: "{{ ec2.instances  }}" # do task for each instance
+  ansible.builtin.add_host:
+    name: {{ item.public_ip }}
+    groups:
+      - giropops-new
