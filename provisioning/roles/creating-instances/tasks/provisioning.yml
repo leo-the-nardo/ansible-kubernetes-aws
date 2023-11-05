@@ -36,3 +36,12 @@
     name: {{ item.public_ip }}
     groups:
       - giropops-new
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/lineinfile_module.html
+- name: Adding the public IP of the created instance to hosts file
+  delegate_to: localhost
+  with_items: "{{ ec2.instances }}"  # do task for each instance
+  ansible.builtin.lineinfile:
+    path: "./hosts.ini"
+    regexp: {{ item.public_ip }}
+    insertafter: "[kubernetes]"
+    line: {{ item.public_ip }}
