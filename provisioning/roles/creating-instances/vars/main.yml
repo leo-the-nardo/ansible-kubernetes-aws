@@ -1,2 +1,9 @@
 ---
 # vars file for creating-instances
+instance_type: t2.micro
+image: ami-0fc5d935ebf8bc3bc
+count: 3
+sec_group_name: giropops-2
+key_name: ansible-class
+region: us-east-1
+aws_profile: default
