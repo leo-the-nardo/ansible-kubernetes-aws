@@ -62,3 +62,14 @@
     host: "{{ item.public_ip }}"
     port: 22
     state: started
+# https://docs.ansible.com/ansible/latest/collections/amazon/aws/ec2_tag_module.html
+- name: Adding a tag to the instance
+  delegate_to: localhost
+  with_items: "{{ ec2.instances }}"
+  amazon.aws.ec2_tag:
+    resource: "{{ item.id }}"
+    region: "{{ region }}"
+    profile: "{{ aws_profile }}"
+    state: present
+    tags:
+      Name: ansible-{{ item.ami_launch_index|int + 1 }}" # ansible-1, ansible-2, etc
