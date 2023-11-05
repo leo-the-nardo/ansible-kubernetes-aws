@@ -1,0 +1,4 @@
+- name: Some name
+  hosts: local # hosts file targets
+  roles:       # List of roles/steps to run
+    - creating-instances
