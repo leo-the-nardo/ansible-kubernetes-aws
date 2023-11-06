@@ -1,0 +1,30 @@
+# NOTE: AT THIS POINT, MACHINES ALREADY EXIST AND ARE RUNNING
+- name: Bootstrap
+  hosts: all
+  become: true
+  gather_facts: false
+  pre_tasks:
+    # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/raw_module.html <- doesn't need python to use
+    - name: Update apt repo
+      ansible.builtin.raw: apt-get update
+    - name: Install Python
+      ansible.builtin.raw: apt-get install -y python3 python3-pip
+  roles:
+    - role: install-k8s
+      tags: install_k8s_role
+
+- name: K8s-master create cluster
+  hosts: K8s-master
+  become: true
+  remote_user: ubuntu
+  roles:
+    - role: create-cluster
+      tags: create_cluster_role # these tags are useful for some aws steps later
+
+- name: K8s-workers join cluster
+  hosts: k8s-workers
+  become: true
+  remote_user: ubuntu
+  roles:
+    - role: join-workers
+      tags: join_workers_role
