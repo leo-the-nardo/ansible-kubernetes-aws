@@ -15,3 +15,9 @@
     path: ~/.kube
     state: directory
     mode: '0755'
+
+- name: Link admin.conf to .kube/config
+  ansible.builtin.file:
+    src: /etc/kubernetes/admin.conf # created by kubeadm init
+    path: ~/.kube/config
+    state: link
