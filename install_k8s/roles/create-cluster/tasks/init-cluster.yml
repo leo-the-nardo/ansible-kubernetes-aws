@@ -27,3 +27,31 @@
   ansible.builtin.command:
     cmd: kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml # TODO: unhardcode it
   register: weavenet_result
+
+# will be used by the join role to be able nodes to join the cluster
+- name: Get join token command
+  ansible.builtin.shell:
+    cmd: kubeadm token list | cut -d ' ' -f1 | sed -n '2p'
+  register: k8s_join_token 
+
+# will be used by the join role to be able nodes to join the cluster
+- name: CA Hash
+  ansible.builtin.shell:
+    cmd: openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+  register: k8s_master_ca_hash 
+
+# dummy host to hold the join token and ca hash
+- name: Add token and ca hash to dummy host
+  # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/add_host_module.html
+  ansible.builtin.add_host:
+    name: "K8S_TOKEN_HOLDER"
+    token: "{{ k8s_join_token.stdout }}"
+    ca_hash: "{{ k8s_master_ca_hash.stdout }}"
+
+- name: Output join token
+  ansible.builtin.debug:
+    msg: "[MASTER] K8S_TOKEN_HOLDER - The join token is: {{ hostvars['K8S_TOKEN_HOLDER']['token'] }}"
+
+- name: Output ca hash
+  ansible.builtin.debug:
+    msg: "[MASTER] K8S_TOKEN_HOLDER - The CA Hash is :{{ hostvars['K8S_TOKEN_HOLDER']['ca_hash'] }}"
