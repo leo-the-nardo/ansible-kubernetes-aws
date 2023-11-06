@@ -11,3 +11,9 @@
   ansible.builtin.apt_key:
     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
     state: present
+
+- name: Add k8s repo
+  # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_repository_module.html
+  ansible.builtin.apt_repository:
+    repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+    state: present
