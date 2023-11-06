@@ -5,3 +5,9 @@
     dest: /tmp/get-docker.sh
     mode: 'u+x'
   ansible.builtin.shell: /tmp/get-docker.sh
+
+- name: Add repo apt-key from k8s
+  # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_key_module.html
+  ansible.builtin.apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
