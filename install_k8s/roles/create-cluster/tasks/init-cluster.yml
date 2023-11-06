@@ -1,0 +1,5 @@
+# This playbook should be run on the MASTER node to initialize the cluster
+- name: Remove old k8s cluster if existing
+  ansible.builtin.command:
+    cmd: kubeadm reset --force
+  register: kubeadm_reset
