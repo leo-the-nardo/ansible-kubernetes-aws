@@ -3,3 +3,8 @@
   ansible.builtin.command:
     cmd: kubeadm reset --force
   register: kubeadm_reset
+
+- name: Initialize k8s cluster
+  ansible.builtin.command:
+    cmd: kubeadm init
+  register: kubeadm_init
