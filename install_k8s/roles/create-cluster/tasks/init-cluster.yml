@@ -8,3 +8,10 @@
   ansible.builtin.command:
     cmd: kubeadm init
   register: kubeadm_init
+
+- name: Create .kube directory
+  # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html
+  ansible.builtin.file:
+    path: ~/.kube
+    state: directory
+    mode: '0755'
