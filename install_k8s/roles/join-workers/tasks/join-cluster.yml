@@ -1,0 +1,19 @@
+# This runs on the WORKER nodes
+- name: Output hostvars join_token
+  ansible.builtin.debug:
+    msg: "[WORKER] K8S_TOKEN_HOLDER - The token is {{ hostvars[k8s_token_holder[K8S_TOKEN_HOLDER]['token']] }}"
+
+- name: Output hostvars ca_cert_hash
+  ansible.builtin.debug:
+    msg: "[WORKER] K8S_TOKEN_HOLDER - The ca_cert_hash is {{ hostvars[k8s_token_holder[K8S_TOKEN_HOLDER]['ca_hash']] }}"
+
+- name: Remove cluster
+  ansible.builtin.command:
+    cmd: kubeadm reset --force
+  register: kubeadm_reset
+
+- name: Add worker to cluster k8s
+  ansible.builtin.shell:
+    kubeadm join --token={{ hostvars[k8s_token_holder[K8S_TOKEN_HOLDER]['token']] }}
+    --discovery-token-ca-cert-hash sha256:{{ hostvars[k8s_token_holder[K8S_TOKEN_HOLDER]['ca_hash']]}}
+    {{K8S_MASTER_NODE_IP}}:{{K8S_API_SECURE_PORT}}
