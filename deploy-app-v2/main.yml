@@ -1,0 +1,7 @@
+- name: Deploy app v2
+  hosts: k8s-master
+  become: true
+  remote_user: ubuntu
+  roles:
+    - role: deploy-app-v2
+      tags: deploy_app_v2_role

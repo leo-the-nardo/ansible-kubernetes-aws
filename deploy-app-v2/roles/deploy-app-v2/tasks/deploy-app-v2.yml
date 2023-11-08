@@ -1,0 +1,49 @@
+- name: Install pip
+  ansible.builtin.apt:
+    name: python3-pip
+    state: present
+
+- name: Install dependencies for k8s module
+  ansible.builtin.pip:
+    name:
+      - openshift
+      - kubernetes
+      - PyYAML
+    state: present
+
+- name: Copy deployment file from app v1 # This is for scale down
+  ansible.builtin.template:
+    src: ./roles/deploy-app-v2/templates/app-v1.yaml.j2
+    dest: /opt/giropops/app-v1.yaml # This file contains less replicas
+    mode: '0644'
+    owner: root
+    group: root
+  register: copy_deploy_app_v1
+
+- name: Copy deployment file from app v2
+  ansible.builtin.template:
+    src: ./roles/deploy-app-v2/templates/app-v2.yaml.j2
+    dest: /opt/giropops/app-v2.yaml
+    mode: '0644'
+    owner: root
+    group: root
+  register: copy_deploy_app_v2
+
+- name: Deploy app-v2
+  kubernetes.core.k8s:
+    state: present
+    src: /opt/giropops/app-v2.yaml
+
+- name: Scale Down app-v1 with copied yaml file
+  kubernetes.core.k8s:
+    state: present
+    src: /opt/giropops/app-v1.yaml # This file contains less replicas
+
+- name: Waiting 2 minutes to remove app-v1 ,press ctrl+c to stop
+  ansible.builtin.pause:
+    minutes: 2
+
+- name: Remove app-v1
+  kubernetes.core.k8s:
+    state: absent
+    src: /opt/giropops/app-v1.yaml
