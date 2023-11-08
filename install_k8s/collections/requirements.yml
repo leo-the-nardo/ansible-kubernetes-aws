@@ -1,8 +1,4 @@
 ---
-- name: community.general
-  src: https://github.com/ansible-collections/community.general
-  version: main
-
-- name: community.kubernetes
-  src: https://github.com/ansible-collections/kubernetes.core
-  version: main
+collections:
+  - name: community.general
+  - name: community.kubernetes
