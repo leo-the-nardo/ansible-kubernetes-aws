@@ -1,0 +1,40 @@
+- name: Create directory to giropops-app
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  with_items:
+    - /opt/giropops
+    - /opt/giropops/logs
+    - /opt/giropops/conf
+  register: create_dir_giropops_app
+
+- name: Copy deployment file to host
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/template_module.html
+  ansible.builtin.template:
+    src: ./roles/deploy-app/templates/app-v1.yaml.j2
+    dest: /opt/giropops/app-v1.yaml
+    mode: '0644'
+    owner: root
+    group: root
+  register: copy_deployment_file
+
+- name: Copy service file to host
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: '0644'
+    owner: root
+    group: root
+  with_items:
+    - { src: './roles/deploy-app/files/service_app.yml', dest: '/opt/giropops/service_app.yml' }
+  register: copy_service_file
+
+- name: Apply giropops app deployment yml file
+  ansible.builtin.shell: kubectl apply -f /opt/giropops/app-v1.yaml
+  register: apply_deployment_file
+
+- name: Apply giropops app service yml file
+  ansible.builtin.shell: kubectl apply -f /opt/giropops/service_app.yml
+  register: apply_service_file
