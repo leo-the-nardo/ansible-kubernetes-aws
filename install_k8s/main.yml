@@ -37,3 +37,11 @@
   roles:
     - role: install-helm
       tags: install_helm_role
+
+- name: Install Monitoring Tools
+  hosts: k8s-master
+  become: true
+  remote_user: ubuntu
+  roles:
+    - role: install-prometheus-stack
+      tags: install_monitoring_role

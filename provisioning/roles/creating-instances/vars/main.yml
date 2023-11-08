@@ -1,6 +1,6 @@
 ---
 # vars file for creating-instances
-instance_type: t2.micro
+instance_type: t2.medium
 image: ami-0fc5d935ebf8bc3bc
 count: 3
 sec_group_name: giropops-2

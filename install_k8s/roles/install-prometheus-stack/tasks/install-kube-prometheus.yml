@@ -1,0 +1,12 @@
+- name: Helm add repo prometheus-community
+  ansible.builtin.shell: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+  register: helm_add_repo_prometheus
+
+- name: Heml repo update
+  ansible.builtin.shell: helm repo update
+  register: helm_repo_update
+
+# note: t2.micro does not have enough resources for it
+- name: Helm Install prometheus, grafana, alertmanager, node-exporter, kube-state-metrics, prometheus-operator
+  ansible.builtin.shell: helm install --set prometheusOpetaror.createCustomResource=false prometheus prometheus-community/kube-prometheus-stack # -n monitoring
+  register: helm_install_prometheus
