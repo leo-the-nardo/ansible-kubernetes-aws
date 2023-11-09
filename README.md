@@ -2,6 +2,7 @@
 A project to setup a Kubernetes cluster using Ansible + AWS
 
 ## Steps
+```
 ├── Provisioning
 │   ├── Create Security Groups
 │   ├── Create EC2 instances in AWS
@@ -18,9 +19,12 @@ A project to setup a Kubernetes cluster using Ansible + AWS
 ├── Deploy app v1
 │   ├── Setup app structure
 │   └── Apply k8s deployments & services
+│
 ├── Deploy app v2
 │   ├── Setup app structure
 │   ├── Apply new version deployments & services
 │   ├── Scale down old version
 │   └── Inactive old version after success deployment
-└── Done
+│
+└── AWX Success/Fails hosts Feedback (Or via CLI with ansible-playbook)
+```
